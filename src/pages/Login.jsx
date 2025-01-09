@@ -1,9 +1,17 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import LoginIcon from '../assest/signin.gif'
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import axios from 'axios'
+import {toast} from "react-hot-toast"
+import {useDispatch} from "react-redux"
+import { login } from "../services/operations/authApi";
 
 const Login = () => {
+
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -18,9 +26,9 @@ const Login = () => {
     }))
   }
 
-  const submitHandle = (e) => {
+  const submitHandle = async (e) => {
     e.preventDefault()
-    console.log(formData)
+    dispatch(login(formData.email, formData.password, navigate))
   }
 
 

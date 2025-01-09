@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import { FaUser, FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
+import {useNavigate} from "react-router-dom"
+import { useDispatch } from "react-redux";
+import { signUp } from "../services/operations/authApi";
 
 const Signup = () => {
+
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -17,14 +24,22 @@ const Signup = () => {
     const { name, value, files } = e.target;
     if (name === "profilePicture") {
       const file = files[0];
-      setFormData((prev) => ({
-        ...prev,
-        profilePicture: file,
-      }));
       if (file) {
-        setPreviewImage(URL.createObjectURL(file));
+        const reader = new FileReader()
+        reader.onloadend = () => {
+          setFormData((prev) => ({
+            ...prev,
+            profilePicture: reader.result
+          }))
+          setPreviewImage(reader.result)
+        }
+        reader.readAsDataURL(file)
       } else {
-        setPreviewImage(null);
+        setFormData((prev) => ({
+          ...prev,
+          profilePicture: null
+        }))
+        setPreviewImage(null)
       }
     } else {
       setFormData((prev) => ({
@@ -34,6 +49,14 @@ const Signup = () => {
     }
   };
 
+  const {
+    name,
+    email,
+    password,
+    confirmPassword,
+    profilePicture,
+  } = formData
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -42,10 +65,10 @@ const Signup = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Handle form submission logic here
-    console.log(formData);
+    dispatch(signUp(name,email,password,confirmPassword,profilePicture,navigate))
   };
 
   return (

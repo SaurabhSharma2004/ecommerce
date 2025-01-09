@@ -1,12 +1,20 @@
-import React from 'react'
+import React, { useState } from "react";
 import Logo from "./Logo";
-import {CiSearch} from "react-icons/ci";
-import {FaRegCircleUser} from "react-icons/fa6";
-import {FaShoppingCart} from "react-icons/fa";
-import {Link} from "react-router-dom";
+import { CiSearch } from "react-icons/ci";
+import { FaRegCircleUser } from "react-icons/fa6";
+import { FaShoppingCart } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../services/operations/authApi";
 
 export const Header = () => {
+  const { user } = useSelector((state) => state.profile);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  // console.log("conslonging the user", user);
   return (
+    // console.log("conslonging the user", user)
     <header className={"h-16 shadow-md bg-white"}>
       <div
         className={
@@ -40,9 +48,32 @@ export const Header = () => {
           </button>
         </div>
 
-        <div className="flex items-center gap-7">
-          <div className={"text-2xl cursor-pointer"}>
-            <FaRegCircleUser />
+        <div className="relative flex items-center gap-7">
+          <div className="relative group flex justify-center items-center">
+            <div onClick={(prev) => setOpen(!prev)} className={"text-2xl cursor-pointer"}>
+              {user ? (
+                <img
+                  src={user?.profilePicture}
+                  alt={user.name}
+                  loading="lazy"
+                  className="aspect-square rounded-full object-cover w-[30px]"
+                />
+              ) : (
+                <Link to={"/sign-up"}>
+                  <FaRegCircleUser />
+                </Link>
+              )}
+            </div>
+
+            {open && (
+              <div className="absolute bottom-0 top-11 h-fit p-2 bg-slate-100 shadow-lg rounded-lg">
+                <nav>
+                  <Link className="" to="/admin-panel">
+                    Admin panel
+                  </Link>
+                </nav>
+              </div>
+            )}
           </div>
 
           <div className="text-2xl relative">
@@ -55,15 +86,24 @@ export const Header = () => {
           </div>
 
           <div>
-            <Link
-              to={"/login"}
-              className="bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-3 text-white font-semibold rounded-full shadow-lg hover:from-blue-600 hover:to-purple-700 transition duration-300 ease-in-out transform hover:scale-105"
-            >
-              Login
-            </Link>
+            {user ? (
+              <button
+                className="bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-3 text-white font-semibold rounded-full shadow-lg hover:from-blue-600 hover:to-purple-700 transition duration-300 ease-in-out transform hover:scale-105"
+                onClick={() => dispatch(logout(navigate))}
+              >
+                Logout
+              </button>
+            ) : (
+              <Link
+                to={"/login"}
+                className="bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-3 text-white font-semibold rounded-full shadow-lg hover:from-blue-600 hover:to-purple-700 transition duration-300 ease-in-out transform hover:scale-105"
+              >
+                Login
+              </Link>
+            )}
           </div>
         </div>
       </div>
     </header>
   );
-}
+};
