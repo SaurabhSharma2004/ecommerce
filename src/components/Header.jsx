@@ -48,13 +48,13 @@ export const Header = () => {
           </button>
         </div>
 
-        <div className="relative flex items-center gap-7">
-          <div className="relative group flex justify-center items-center">
-            <div onClick={(prev) => setOpen(!prev)} className={"text-2xl cursor-pointer"}>
+        <div className="flex items-center gap-7">
+          <div className="relative flex justify-center items-center" onClick={() => setOpen(!open)}>
+            <div className={"text-2xl cursor-pointer"}>
               {user ? (
                 <img
                   src={user?.profilePicture}
-                  alt={user.name}
+                  alt={user.name.substring(0, 2)}
                   loading="lazy"
                   className="aspect-square rounded-full object-cover w-[30px]"
                 />
@@ -66,9 +66,9 @@ export const Header = () => {
             </div>
 
             {open && (
-              <div className="absolute bottom-0 top-11 h-fit p-2 bg-slate-100 shadow-lg rounded-lg">
+              <div className=" absolute bottom-0 top-9 h-fit p-2 bg-slate-100 shadow-lg rounded-lg">
                 <nav>
-                  <Link className="" to="/admin-panel">
+                  <Link className="whitespace-nowrap" to="/admin-panel">
                     Admin panel
                   </Link>
                 </nav>

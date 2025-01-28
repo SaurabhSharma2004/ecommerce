@@ -6,7 +6,8 @@ import {setUser} from "../../slices/profileSlice"
 
 const {
     SIGNUP_API,
-    LOGIN_API
+    LOGIN_API,
+    AllUsers_API
 } = authEndpoints
 
 export function signUp(
@@ -91,4 +92,29 @@ export function logout (navigate) {
         toast.success("Logout successful")
         navigate("/login")
     }
+}
+
+export const fetchAllUsers = async (token) => {
+    // console.log("printing token in authApi", token);
+    const toastId = toast.loading("Loading...")
+    let result = []
+    try {
+        const response = await apiConnector("GET", AllUsers_API, null, {
+            Authorization: `Bearer ${token}`,
+        })
+
+        console.log("AllUsers_API_RESPONSE", response);
+
+        if (!response.data.success) {
+            throw new Error(response.data.message)
+        }
+        toast.success("All users fetched")
+        result = response.data.data
+    } catch (error) {
+        console.log("AllUsers API ERROR............", error);
+        toast.error("Failed to fetch all users");
+    }
+    
+    toast.dismiss(toastId)
+    return result
 }
