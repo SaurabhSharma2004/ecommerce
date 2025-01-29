@@ -7,7 +7,8 @@ import {setUser} from "../../slices/profileSlice"
 const {
     SIGNUP_API,
     LOGIN_API,
-    AllUsers_API
+    AllUsers_API,
+    EditUser_API
 } = authEndpoints
 
 export function signUp(
@@ -117,4 +118,24 @@ export const fetchAllUsers = async (token) => {
     
     toast.dismiss(toastId)
     return result
+}
+
+export const editUser = async (token,id, data) => {
+    const toastId = toast.loading("Loading...")
+    try {
+        const response = await apiConnector("PUT", `${authEndpoints.EditUser_API}/${id}`, data, {
+            Authorization: `Bearer ${token}`,
+        })
+
+        console.log("EditUser_API_RESPONSE", response);
+        if(!response.data.success) {
+            throw new Error(response.data.message)
+        }
+        toast.success("User updated")
+
+    } catch (error) {
+        console.log("EditUser API ERROR............", error);
+        toast.error("Failed to update user");
+    }
+    toast.dismiss(toastId)
 }
