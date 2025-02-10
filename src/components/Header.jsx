@@ -54,7 +54,7 @@ export const Header = () => {
               {user ? (
                 <img
                   src={user?.profilePicture}
-                  alt={user.name.substring(0, 2)}
+                  alt=''
                   loading="lazy"
                   className="aspect-square rounded-full object-cover w-[30px]"
                 />
@@ -65,10 +65,10 @@ export const Header = () => {
               )}
             </div>
 
-            {open && (
+            {open && user?.role === 'Admin' && (
               <div className=" absolute bottom-0 top-9 h-fit p-2 bg-slate-100 shadow-lg rounded-lg">
                 <nav>
-                  <Link className="whitespace-nowrap" to="/admin-panel">
+                  <Link className="whitespace-nowrap" to="/admin-panel/all-products">
                     Admin panel
                   </Link>
                 </nav>

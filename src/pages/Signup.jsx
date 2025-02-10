@@ -1,20 +1,19 @@
 import React, { useState } from "react";
 import { FaUser, FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { signUp } from "../services/operations/authApi";
 
 const Signup = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
-
-  const [formData, setFormData] = useState({
+  const [data, setData] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
-    profilePicture: null,
+    profilePicture: null, // Store file object here
   });
   const [previewImage, setPreviewImage] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -25,37 +24,28 @@ const Signup = () => {
     if (name === "profilePicture") {
       const file = files[0];
       if (file) {
-        const reader = new FileReader()
-        reader.onloadend = () => {
-          setFormData((prev) => ({
-            ...prev,
-            profilePicture: reader.result
-          }))
-          setPreviewImage(reader.result)
-        }
-        reader.readAsDataURL(file)
-      } else {
-        setFormData((prev) => ({
+        // Store file object in state
+        setData((prev) => ({
           ...prev,
-          profilePicture: null
-        }))
-        setPreviewImage(null)
+          profilePicture: file,
+        }));
+        // Generate a preview using FileReader
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreviewImage(reader.result);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        setData((prev) => ({ ...prev, profilePicture: null }));
+        setPreviewImage(null);
       }
     } else {
-      setFormData((prev) => ({
+      setData((prev) => ({
         ...prev,
         [name]: value,
       }));
     }
   };
-
-  const {
-    name,
-    email,
-    password,
-    confirmPassword,
-    profilePicture,
-  } = formData
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -67,8 +57,21 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic here
-    dispatch(signUp(name,email,password,confirmPassword,profilePicture,navigate))
+    const formData = new FormData();
+    formData.append("name", data.name);
+    formData.append("email", data.email);
+    formData.append("password", data.password);
+    formData.append("confirmPassword", data.confirmPassword);
+    if (data.profilePicture) {
+      formData.append("profilePicture", data.profilePicture);
+    }
+
+    // Logging form data entries for debugging
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+
+    dispatch(signUp(formData, navigate));
   };
 
   return (
@@ -111,7 +114,7 @@ const Signup = () => {
               type="text"
               name="name"
               placeholder="Full Name"
-              value={formData.name}
+              value={data.name}
               onChange={handleChange}
               className="w-full outline-none text-gray-700"
               required
@@ -124,7 +127,7 @@ const Signup = () => {
               type="email"
               name="email"
               placeholder="Email Address"
-              value={formData.email}
+              value={data.email}
               onChange={handleChange}
               className="w-full outline-none text-gray-700"
               required
@@ -137,7 +140,7 @@ const Signup = () => {
               type={showPassword ? "text" : "password"}
               name="password"
               placeholder="Password"
-              value={formData.password}
+              value={data.password}
               onChange={handleChange}
               className="w-full outline-none text-gray-700"
               required
@@ -156,7 +159,7 @@ const Signup = () => {
               type={showConfirmPassword ? "text" : "password"}
               name="confirmPassword"
               placeholder="Confirm Password"
-              value={formData.confirmPassword}
+              value={data.confirmPassword}
               onChange={handleChange}
               className="w-full outline-none text-gray-700"
               required

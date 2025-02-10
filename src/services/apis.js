@@ -8,3 +8,9 @@ export const authEndpoints = {
     AllUsers_API: `${BASE_URL}/all-users`,
     EditUser_API: `${BASE_URL}/edit-user`,
 }
+
+//PRODUCT ENDPOINTS
+
+export const productEndpoints = {
+    UPLOAD_PRODUCT_API : `${BASE_URL}/upload-product`,
+}

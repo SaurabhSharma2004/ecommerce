@@ -12,24 +12,14 @@ const {
 } = authEndpoints
 
 export function signUp(
-    name,
-    email,
-    password,
-    confirmPassword,
-    profilePicture,
+    data,
     navigate
 ) {
     return async (dispatch) => {
         const toastId = toast.loading("Loading...")
         dispatch(setLoading(true))
         try {
-            const response = await apiConnector("POST", SIGNUP_API, {
-                name,
-                email,
-                password,
-                confirmPassword,
-                profilePicture
-            })
+            const response = await apiConnector("POST", SIGNUP_API, data)
 
             console.log("SIGNUP_API_RESPONSE", response);
 
